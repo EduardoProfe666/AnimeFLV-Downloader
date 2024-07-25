@@ -1,0 +1,5 @@
+mesop
+gunicorn
+cloudscraper
+lxml
+beautifulsoup4
