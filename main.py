@@ -32,7 +32,7 @@ def home():
             type="headline-5", style=me.Style(text_align="center", color='#5474B4', font_family="Apple Chancery"))
 
         me.input(
-            label="Search your animes!",
+            label="Busca tus animes!",
             style=me.Style(width="100%", margin=me.Margin.all(5)),
             on_input=on_type,
             on_enter=on_filter_by_series,
@@ -41,7 +41,7 @@ def home():
 
         with me.box(style=me.Style(display="flex", justify_content="end")):
             me.button(
-                label="Search",
+                label="Buscar",
                 type="raised",
                 disabled=state.serie == '',
                 style=me.Style(text_align="right", align_self="end", margin=me.Margin.all(5)),

@@ -406,7 +406,7 @@ def anime_info_component(meta: GridTableCellMeta):
             header_config=GridTableHeader(sticky=True),
             row_config=GridTableRow(
                 columns={
-                    "Episodio": GridTableColumn(component=text_component_bold, sortable=True),
+                    "Episodio": GridTableColumn(component=text_component_bold),
                     "Descargas": GridTableColumn(component=download_component),
                 },
             ),
@@ -418,14 +418,43 @@ def anime_info_component(meta: GridTableCellMeta):
         )
 
 
-def actions_component(meta: GridTableCellMeta):
-    me.icon("visibility", style=me.Style(color="green", cursor="pointer", font_weight="bold"))
 
 def download_component(meta: GridTableCellMeta):
     data: List[DownloadLinkInfo] = meta.value
 
-    for x in data:
-        me.link(text=x.server, url=x.url, open_in_new_tab=True)
+    with me.box(style=me.Style(display="flex", flex_wrap="wrap", gap=5)):
+        for x in data:
+            match x.server:
+                case "MEGA":
+                    color = "#FE1B19"
+                case "1Fichier":
+                    color = "#FEB01F"
+                case "Zippyshare":
+                    color = "#CA4600"
+                case "Stape":
+                    color = "#21328C"
+                case _:
+                    color = "#F01879"
+
+            me.link(
+                text=x.server,
+                url=x.url,
+                open_in_new_tab=True,
+                style=me.Style(
+                    display="inline-block",
+                    padding=me.Padding.all(10),
+                    border=me.Border().all(me.BorderSide(width=1, color=color, style="solid")),
+                    border_radius=5,
+                    color=color,
+                    text_decoration="none",
+                    text_align="center",
+                    font_weight="bold",
+                    flex_grow=1,
+                    flex_shrink=1,
+                    flex_basis="auto",
+                    min_width="100px",
+                )
+            )
 
 def text_component_bold(meta: GridTableCellMeta):
     me.text(meta.value, type="body-1", style=me.Style(font_weight='bold', cursor="pointer"))
