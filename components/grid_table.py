@@ -336,7 +336,7 @@ def expander(df_row_index: int):
         with me.box(
                 style=me.Style(
                     display="grid",
-                    grid_template_columns="repeat(2, 1fr)",
+                    grid_template_columns=f"repeat({len(columns)}, minmax(150px, 1fr))",
                     gap=10,
                 )
         ):
@@ -409,7 +409,12 @@ def image_component(meta: GridTableCellMeta):
     me.image(
         src=meta.value,
         alt='Anime Image',
-        style=me.Style(width='10rem', height='10rem')
+        style=me.Style(
+            width='100%',
+            height='auto',
+            max_width='15rem',
+            max_height='15rem',
+        )
     )
 
 @me.component
@@ -443,7 +448,8 @@ def grid_table(
                 display="grid",
                 # This creates a grid with "equal" sized rows based on the columns. We may want to
                 # override this to allow custom widths.
-                grid_template_columns=f"repeat({len(data.columns)}, 1fr)",
+                grid_template_columns=f"repeat({len(data.columns)}, minmax(70px, 1fr))",
+                gap=10
             )
     ):
         _theme: GridTableTheme = GridTableThemeLight()
@@ -589,6 +595,9 @@ def _make_cell_style(
     elif row_style:
         style = row_style(cell_meta)
 
+    style.width = "100%"
+    style.box_sizing = "border-box"
+
     return style
 
 
@@ -611,5 +620,6 @@ def _make_expander_style(
         style = expander_style(df_row_index)
 
     style.grid_column = f"span {col_span}"
+    style.width = "100%"
 
     return style
