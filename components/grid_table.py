@@ -52,6 +52,7 @@ class State:
         "Image": [],
         "Title": [],
         "Synopsis": [],
+        "Actions": [],
     }
 ))
 
@@ -380,6 +381,9 @@ def bool_component(meta: GridTableCellMeta):
         me.icon("check_circle", style=me.Style(color="green"))
     else:
         me.icon("cancel", style=me.Style(color="red"))
+
+def actions_component(meta: GridTableCellMeta):
+    me.icon("visibility", style=me.Style(color="green", font_weight="bold"))
 
 def text_component_bold(meta: GridTableCellMeta):
     me.text(meta.value, type="body-1", style=me.Style(font_weight='bold'))
