@@ -23,13 +23,13 @@ TODOs:
 from dataclasses import dataclass, field
 from datetime import datetime
 from io import StringIO
-from typing import Any, Callable, Literal, Protocol
+from typing import Any, Callable, Literal, Protocol, List
 
 import pandas as pd
 
 import mesop as me
 
-from api.animeflv import AnimeInfo
+from api.animeflv import AnimeInfo, DownloadLinkInfo
 from utils.api_requests import get_anime_episode_info_download
 from utils.front import convert_to_dataframe_2
 
@@ -402,13 +402,12 @@ def anime_info_component(meta: GridTableCellMeta):
         border_radius=10,)):
         grid_table(
             dataf,
-            header_config=GridTableHeader(sticky=True),
             on_sort=on_table_sort,
+            header_config=GridTableHeader(sticky=True),
             row_config=GridTableRow(
                 columns={
-                    "Previsualización": GridTableColumn(component=image_component),
                     "Episodio": GridTableColumn(component=text_component_bold, sortable=True),
-                    # "Download": GridTableColumn(component=text_component),
+                    "Descargas": GridTableColumn(component=download_component),
                 },
             ),
             sort_column=state.sort_column,
@@ -422,6 +421,11 @@ def anime_info_component(meta: GridTableCellMeta):
 def actions_component(meta: GridTableCellMeta):
     me.icon("visibility", style=me.Style(color="green", cursor="pointer", font_weight="bold"))
 
+def download_component(meta: GridTableCellMeta):
+    data: List[DownloadLinkInfo] = meta.value
+
+    for x in data:
+        me.link(text=x.server, url=x.url, open_in_new_tab=True)
 
 def text_component_bold(meta: GridTableCellMeta):
     me.text(meta.value, type="body-1", style=me.Style(font_weight='bold', cursor="pointer"))

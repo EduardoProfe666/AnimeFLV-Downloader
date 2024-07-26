@@ -48,33 +48,30 @@ def home():
                 on_click=on_filter_by_series
             )
 
-        grid_table(
-            get_data_frame(),
-            header_config=GridTableHeader(sticky=True),
-            on_click=on_table_cell_click,
-            on_sort=on_table_sort,
-            row_config=GridTableRow(
-                columns={
-                    "Poster": GridTableColumn(component=image_component),
-                    "Título": GridTableColumn(component=text_component_bold, sortable=True),
-                    "Sinopsis": GridTableColumn(component=text_component),
-                    "Id en AnimeFLV": GridTableColumn(component=text_component_bold, sortable=True),
-                    # "Bools": GridTableColumn(component=bool_component),
-                    # "Date Times": GridTableColumn(component=date_component),
-                    # "Floats": GridTableColumn(component=floats_component),
-                    # "Ints": GridTableColumn(style=ints_style, sortable=True),
-                    # "Strings": GridTableColumn(
-                    #     component=strings_component, sortable=True
-                    # ),
-                },
-                expander=GridTableExpander(
-                    component=anime_info_component,
-                    df_row_index=state.expanded_df_row_index,
+        with me.box(style=me.Style(margin=me.Margin.all(10), border=me.Border.all(
+                me.BorderSide(width=3, color="#5474B4", style='groove')
+        ),
+                                   border_radius=10, )):
+            grid_table(
+                get_data_frame(),
+                header_config=GridTableHeader(sticky=True),
+                on_click=on_table_cell_click,
+                on_sort=on_table_sort,
+                row_config=GridTableRow(
+                    columns={
+                        "Poster": GridTableColumn(component=image_component),
+                        "Título": GridTableColumn(component=text_component_bold, sortable=True),
+                        "Sinopsis": GridTableColumn(component=text_component),
+                        "Id en AnimeFLV": GridTableColumn(component=text_component_bold, sortable=True),
+                    },
+                    expander=GridTableExpander(
+                        component=anime_info_component,
+                        df_row_index=state.expanded_df_row_index,
+                    ),
                 ),
-            ),
-            sort_column=state.sort_column,
-            sort_direction=state.sort_direction,
-            theme=GridTableThemeLight(striped=True)
-            if state.theme == "light"
-            else GridTableThemeDark(striped=True),
-        )
+                sort_column=state.sort_column,
+                sort_direction=state.sort_direction,
+                theme=GridTableThemeLight(striped=True)
+                if state.theme == "light"
+                else GridTableThemeDark(striped=True),
+            )
