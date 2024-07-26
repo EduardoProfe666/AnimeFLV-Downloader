@@ -10,8 +10,9 @@ from utils.front import convert_to_dataframe
 
 def on_filter_by_series(e: me.ClickEvent | me.InputEnterEvent):
     state = me.state(State)
-    state.df = serialize_dataframe(convert_to_dataframe(search_animes(state.serie)))
-    get_data_frame()
+    if state.serie != '':
+        state.df = serialize_dataframe(convert_to_dataframe(search_animes(state.serie)))
+        state.df = get_data_frame()
 
 
 def on_type(e: me.InputBlurEvent | me.InputEnterEvent | me.InputEvent):
@@ -30,18 +31,20 @@ def home():
             text="In order to use the downloader, fist search the desired anime. The engine will start looking for the similar ones. Then you can select it, and then download any of its episodes from different servers... With this ease you can see offline your favorite japanese cartoons.",
             type="headline-5", style=me.Style(text_align="center", color='maroon'))
 
-        with me.box():
-            me.input(
-                label="Search your animes!",
-                style=me.Style(width="90%", margin=me.Margin.all(5)),
-                on_blur=on_type,
-                on_enter=on_filter_by_series,
-                type="search"
-            )
+        me.input(
+            label="Search your animes!",
+            style=me.Style(width="100%", margin=me.Margin.all(5)),
+            on_input=on_type,
+            on_enter=on_filter_by_series,
+            type="search"
+        )
+
+        with me.box(style=me.Style(display="flex", justify_content="end")):
             me.button(
                 label="Search",
                 type="raised",
-                style=me.Style(width="8%"),
+                disabled=state.serie == '',
+                style=me.Style(text_align="right", align_self="end", margin=me.Margin.all(5)),
                 on_click=on_filter_by_series
             )
 
@@ -74,15 +77,3 @@ def home():
             if state.theme == "light"
             else GridTableThemeDark(striped=True),
         )
-
-        # Used for demonstrating "table button" click example.
-        if state.string_output:
-            with me.box(
-                    style=me.Style(
-                        background="#ececec",
-                        color="#333",
-                        margin=me.Margin(top=20),
-                        padding=me.Padding.all(15),
-                    )
-            ):
-                me.text(f"You clicked button: {state.string_output}")

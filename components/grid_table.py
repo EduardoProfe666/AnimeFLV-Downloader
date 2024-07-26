@@ -33,12 +33,15 @@ from api.animeflv import AnimeInfo
 
 SortDirection = Literal["asc", "desc"]
 
+
 def serialize_dataframe(df: pd.DataFrame) -> str:
     return df.to_json(orient="split")
+
 
 def deserialize_dataframe(json_str: str) -> pd.DataFrame:
     json_io = StringIO(json_str)
     return pd.read_json(json_io, orient="split")
+
 
 @me.stateclass
 class State:
@@ -50,13 +53,13 @@ class State:
     serie: str
     theme: str = "light"
     df: str = serialize_dataframe(pd.DataFrame(
-    data={
-        "Image": [],
-        "Title": [],
-        "Synopsis": [],
-        "Id in AnimeFLV": []
-    }
-))
+        data={
+            "Image": [],
+            "Title": [],
+            "Synopsis": [],
+            "Id in AnimeFLV": []
+        }
+    ))
 
 
 @dataclass(kw_only=True)
@@ -384,14 +387,40 @@ def bool_component(meta: GridTableCellMeta):
     else:
         me.icon("cancel", style=me.Style(color="red"))
 
+
+def anime_info_component(meta: GridTableCellMeta):
+    state = me.state(State)
+
+    grid_table(
+        state.df,
+        header_config=GridTableHeader(sticky=True),
+        on_sort=on_table_sort,
+        row_config=GridTableRow(
+            columns={
+                "Image Preview": GridTableColumn(component=image_component),
+                "Episode": GridTableColumn(component=text_component_bold, sortable=True),
+                # "Download": GridTableColumn(component=text_component),
+            },
+        ),
+        sort_column=state.sort_column,
+        sort_direction=state.sort_direction,
+        theme=GridTableThemeLight(striped=True)
+        if state.theme == "light"
+        else GridTableThemeDark(striped=True),
+    )
+
+
 def actions_component(meta: GridTableCellMeta):
     me.icon("visibility", style=me.Style(color="green", cursor="pointer", font_weight="bold"))
+
 
 def text_component_bold(meta: GridTableCellMeta):
     me.text(meta.value, type="body-1", style=me.Style(font_weight='bold', cursor="pointer"))
 
+
 def text_component(meta: GridTableCellMeta):
     me.text(meta.value, type="body-1", style=me.Style(cursor="pointer"))
+
 
 def ints_style(meta: GridTableCellMeta) -> me.Style:
     """Example of a cell style based on the integer value."""
@@ -415,6 +444,7 @@ def date_component(meta: GridTableCellMeta):
     """Example of a cell rendering using custom date formatting."""
     me.text(meta.value.strftime("%b %d, %Y at %I:%M %p"))
 
+
 def image_component(meta: GridTableCellMeta):
     """Example of a cell rendering using image."""
     me.image(
@@ -428,6 +458,7 @@ def image_component(meta: GridTableCellMeta):
             max_height='15rem',
         )
     )
+
 
 @me.component
 def grid_table(
