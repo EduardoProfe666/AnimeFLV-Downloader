@@ -15,7 +15,7 @@ def convert_to_dataframe_1(anime_list:  list[AnimeInfo]) -> pd.DataFrame:
 
 def convert_to_dataframe_2(anime_list:  list[EpisodeInfoDownload]) -> pd.DataFrame:
     images = [anime.image_preview for anime in anime_list]
-    episodes = [anime.id for anime in anime_list]
+    episodes = [str(anime.id) for anime in anime_list]
     downloads = [anime.downloads for anime in anime_list]
 
     data = {"Previsualización": images, "Episodio": episodes, "Descargas": downloads}
