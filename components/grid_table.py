@@ -406,8 +406,8 @@ def anime_info_component(meta: GridTableCellMeta):
             on_sort=on_table_sort,
             row_config=GridTableRow(
                 columns={
-                    "Image Preview": GridTableColumn(component=image_component),
-                    "Episode": GridTableColumn(component=text_component_bold, sortable=True),
+                    "Previsualización": GridTableColumn(component=image_component),
+                    "Episodio": GridTableColumn(component=text_component_bold, sortable=True),
                     # "Download": GridTableColumn(component=text_component),
                 },
             ),
