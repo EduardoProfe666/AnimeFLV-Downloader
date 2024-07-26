@@ -3,3 +3,4 @@ gunicorn
 cloudscraper
 lxml
 beautifulsoup4
+pandas
