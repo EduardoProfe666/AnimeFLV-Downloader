@@ -42,14 +42,16 @@ def deserialize_dataframe(json_str: str) -> pd.DataFrame:
 class State:
     expanded_df_row_index: int | None = None
     sort_column: str
+    is_searching: bool
     sort_direction: SortDirection = "asc"
     string_output: str
     table_filter: str
     theme: str = "light"
     df: str = serialize_dataframe(pd.DataFrame(
     data={
-        "Image": ['https://animeflv.net/uploads/animes/covers/2536.jpg', 'https://animeflv.net/uploads/animes/covers/1620.jpg', 'https://animeflv.net/uploads/animes/covers/2731.jpg'],
-
+        "Image": [],
+        "Title": [],
+        "Synopsis": [],
     }
 ))
 
@@ -379,6 +381,11 @@ def bool_component(meta: GridTableCellMeta):
     else:
         me.icon("cancel", style=me.Style(color="red"))
 
+def text_component_bold(meta: GridTableCellMeta):
+    me.text(meta.value, type="body-1", style=me.Style(font_weight='bold'))
+
+def text_component(meta: GridTableCellMeta):
+    me.text(meta.value, type="body-1")
 
 def ints_style(meta: GridTableCellMeta) -> me.Style:
     """Example of a cell style based on the integer value."""
