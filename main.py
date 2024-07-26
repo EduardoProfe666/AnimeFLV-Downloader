@@ -62,7 +62,7 @@ def home():
                         "Poster": GridTableColumn(component=image_component),
                         "Título": GridTableColumn(component=text_component_bold, sortable=True),
                         "Sinopsis": GridTableColumn(component=text_component),
-                        "Id en AnimeFLV": GridTableColumn(component=text_component_bold, sortable=True),
+                        "Nombre": GridTableColumn(component=text_component_bold, sortable=True),
                     },
                     expander=GridTableExpander(
                         component=anime_info_component,

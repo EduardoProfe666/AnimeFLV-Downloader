@@ -40,6 +40,11 @@ def search_animes(search: str):
         data = wrap_request(api.search, search, expected=[AnimeInfo(0, "")])
     return data
 
+def latest_animes():
+    with AnimeFLV() as api:
+        data = wrap_request(api.get_latest_animes, expected=[AnimeInfo(0, "")])
+    return data
+
 
 def get_anime_episode_info_download(id: str) -> List[EpisodeInfoDownload]:
     with AnimeFLV() as api:

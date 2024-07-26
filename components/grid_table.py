@@ -59,7 +59,7 @@ class State:
             "Poster": [],
             "Título": [],
             "Sinopsis": [],
-            "Id en AnimeFLV": []
+            "Nombre": []
         }
     ))
 
@@ -392,7 +392,7 @@ def bool_component(meta: GridTableCellMeta):
 
 def anime_info_component(meta: GridTableCellMeta):
     state = me.state(State)
-    anime = deserialize_dataframe(state.df)['Id en AnimeFLV'].get(meta)
+    anime = deserialize_dataframe(state.df)['Nombre'].get(meta)
 
     dataf = convert_to_dataframe_2(get_anime_episode_info_download(anime))
 
