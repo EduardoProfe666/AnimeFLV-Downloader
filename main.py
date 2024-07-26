@@ -1,33 +1,49 @@
-
 import mesop as me
 
 from components.grid_table import GridTableThemeLight, GridTableThemeDark, expander, GridTableExpander, \
     GridTableColumn, on_table_sort, \
     GridTableRow, on_table_cell_click, GridTableHeader, get_data_frame, grid_table, State, image_component, \
-    serialize_dataframe, text_component, text_component_bold, actions_component
+    serialize_dataframe, text_component, text_component_bold
 from utils.api_requests import search_animes
 from utils.front import convert_to_dataframe
 
 
-def on_filter_by_series(e: me.InputBlurEvent | me.InputEnterEvent | me.InputEvent):
+def on_filter_by_series(e: me.ClickEvent | me.InputEnterEvent):
     state = me.state(State)
-    state.df = serialize_dataframe(convert_to_dataframe(search_animes(e.value)))
+    state.df = serialize_dataframe(convert_to_dataframe(search_animes(state.serie)))
     get_data_frame()
+
+
+def on_type(e: me.InputBlurEvent | me.InputEnterEvent | me.InputEvent):
+    state = me.state(State)
+    state.serie = e.value
+
 
 @me.page(title="Anime Free Downloader")
 def home():
     state = me.state(State)
 
     with me.box(style=me.Style(margin=me.Margin.all(30))):
-        me.text(text="Anime Free Downloader", type="headline-1", style=me.Style(text_align="center", color='green'))
-        me.text(text="In order to use the downloader, just write your anime and exit or re-enter the prompt. The engine will start looking for the similar ones. Then you can select whatever you want to download... With this ease you can see offline your favorite japanese cartoons.", type="headline-5", style=me.Style(text_align="center", color='maroon'))
+        me.text(text="Anime Free Downloader", type="headline-2",
+                style=me.Style(text_align="center", width="100%", color='green'))
+        me.text(
+            text="In order to use the downloader, fist search the desired anime. The engine will start looking for the similar ones. Then you can select it, and then download any of its episodes from different servers... With this ease you can see offline your favorite japanese cartoons.",
+            type="headline-5", style=me.Style(text_align="center", color='maroon'))
 
-        me.input(
-            label="Filter the anime list",
-            style=me.Style(width="100%"),
-            on_blur=on_filter_by_series,
-            on_enter=on_filter_by_series,
-        )
+        with me.box():
+            me.input(
+                label="Search your animes!",
+                style=me.Style(width="90%", margin=me.Margin.all(5)),
+                on_blur=on_type,
+                on_enter=on_filter_by_series,
+                type="search"
+            )
+            me.button(
+                label="Search",
+                type="raised",
+                style=me.Style(width="8%"),
+                on_click=on_filter_by_series
+            )
 
         grid_table(
             get_data_frame(),
@@ -39,7 +55,6 @@ def home():
                     "Image": GridTableColumn(component=image_component),
                     "Title": GridTableColumn(component=text_component_bold, sortable=True),
                     "Synopsis": GridTableColumn(component=text_component),
-                    "Actions": GridTableColumn(component=actions_component)
                     # "Bools": GridTableColumn(component=bool_component),
                     # "Date Times": GridTableColumn(component=date_component),
                     # "Floats": GridTableColumn(component=floats_component),

@@ -29,6 +29,8 @@ import pandas as pd
 
 import mesop as me
 
+from api.animeflv import AnimeInfo
+
 SortDirection = Literal["asc", "desc"]
 
 def serialize_dataframe(df: pd.DataFrame) -> str:
@@ -42,17 +44,17 @@ def deserialize_dataframe(json_str: str) -> pd.DataFrame:
 class State:
     expanded_df_row_index: int | None = None
     sort_column: str
-    is_searching: bool
     sort_direction: SortDirection = "asc"
     string_output: str
     table_filter: str
+    serie: str
     theme: str = "light"
     df: str = serialize_dataframe(pd.DataFrame(
     data={
         "Image": [],
         "Title": [],
         "Synopsis": [],
-        "Actions": [],
+        "Id in AnimeFLV": []
     }
 ))
 
@@ -278,7 +280,7 @@ def get_data_frame():
     # Simple filtering by the Strings column.
     if state.table_filter:
         return sorted_df[
-            sorted_df["Strings"].str.lower().str.contains(state.table_filter.lower())
+            sorted_df["Title"].str.lower().str.contains(state.table_filter.lower())
         ]
     else:
         return sorted_df
@@ -383,17 +385,18 @@ def bool_component(meta: GridTableCellMeta):
         me.icon("cancel", style=me.Style(color="red"))
 
 def actions_component(meta: GridTableCellMeta):
-    me.icon("visibility", style=me.Style(color="green", font_weight="bold"))
+    me.icon("visibility", style=me.Style(color="green", cursor="pointer", font_weight="bold"))
 
 def text_component_bold(meta: GridTableCellMeta):
-    me.text(meta.value, type="body-1", style=me.Style(font_weight='bold'))
+    me.text(meta.value, type="body-1", style=me.Style(font_weight='bold', cursor="pointer"))
 
 def text_component(meta: GridTableCellMeta):
-    me.text(meta.value, type="body-1")
+    me.text(meta.value, type="body-1", style=me.Style(cursor="pointer"))
 
 def ints_style(meta: GridTableCellMeta) -> me.Style:
     """Example of a cell style based on the integer value."""
     return me.Style(
+        cursor="pointer",
         background="#29a529" if meta.value > 0 else "#db4848",
         color="#fff",
         padding=me.Padding.all(10),
@@ -418,6 +421,7 @@ def image_component(meta: GridTableCellMeta):
         src=meta.value,
         alt='Anime Image',
         style=me.Style(
+            cursor="pointer",
             width='100%',
             height='auto',
             max_width='15rem',
