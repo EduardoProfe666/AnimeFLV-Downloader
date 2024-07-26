@@ -26,10 +26,10 @@ def home():
 
     with me.box(style=me.Style(margin=me.Margin.all(30))):
         me.text(text="Anime Free Downloader", type="headline-2",
-                style=me.Style(text_align="center", width="100%", color='green'))
+                style=me.Style(text_align="center", width="100%", color='#20A2FE', font_weight="bold", font_family="Consolas"))
         me.text(
             text="In order to use the downloader, fist search the desired anime. The engine will start looking for the similar ones. Then you can select it, and then download any of its episodes from different servers... With this ease you can see offline your favorite japanese cartoons.",
-            type="headline-5", style=me.Style(text_align="center", color='maroon'))
+            type="headline-5", style=me.Style(text_align="center", color='#5474B4', font_family="Apple Chancery"))
 
         me.input(
             label="Search your animes!",
