@@ -30,6 +30,8 @@ import pandas as pd
 import mesop as me
 
 from api.animeflv import AnimeInfo
+from utils.api_requests import get_anime_episode_info_download
+from utils.front import convert_to_dataframe_2
 
 SortDirection = Literal["asc", "desc"]
 
@@ -54,10 +56,10 @@ class State:
     theme: str = "light"
     df: str = serialize_dataframe(pd.DataFrame(
         data={
-            "Image": [],
-            "Title": [],
-            "Synopsis": [],
-            "Id in AnimeFLV": []
+            "Poster": [],
+            "Título": [],
+            "Sinopsis": [],
+            "Id en AnimeFLV": []
         }
     ))
 
@@ -390,24 +392,31 @@ def bool_component(meta: GridTableCellMeta):
 
 def anime_info_component(meta: GridTableCellMeta):
     state = me.state(State)
+    anime = deserialize_dataframe(state.df)['Id en AnimeFLV'].get(meta)
 
-    grid_table(
-        state.df,
-        header_config=GridTableHeader(sticky=True),
-        on_sort=on_table_sort,
-        row_config=GridTableRow(
-            columns={
-                "Image Preview": GridTableColumn(component=image_component),
-                "Episode": GridTableColumn(component=text_component_bold, sortable=True),
-                # "Download": GridTableColumn(component=text_component),
-            },
+    dataf = convert_to_dataframe_2(get_anime_episode_info_download(anime))
+
+    with me.box(style=me.Style(margin=me.Margin.all(10), border=me.Border.all(
+          me.BorderSide(width=3, color="#5474B4", style='groove')
         ),
-        sort_column=state.sort_column,
-        sort_direction=state.sort_direction,
-        theme=GridTableThemeLight(striped=True)
-        if state.theme == "light"
-        else GridTableThemeDark(striped=True),
-    )
+        border_radius=10,)):
+        grid_table(
+            dataf,
+            header_config=GridTableHeader(sticky=True),
+            on_sort=on_table_sort,
+            row_config=GridTableRow(
+                columns={
+                    "Image Preview": GridTableColumn(component=image_component),
+                    "Episode": GridTableColumn(component=text_component_bold, sortable=True),
+                    # "Download": GridTableColumn(component=text_component),
+                },
+            ),
+            sort_column=state.sort_column,
+            sort_direction=state.sort_direction,
+            theme=GridTableThemeLight(striped=True)
+            if state.theme == "light"
+            else GridTableThemeDark(striped=True),
+        )
 
 
 def actions_component(meta: GridTableCellMeta):

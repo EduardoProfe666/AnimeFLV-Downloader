@@ -1,9 +1,9 @@
 import time
-from typing import Any
+from typing import Any, List
 
 from cloudscraper.exceptions import CloudflareChallengeError
 
-from api.animeflv import AnimeInfo, AnimeFLV
+from api.animeflv import AnimeInfo, AnimeFLV, EpisodeInfoDownload, EpisodeInfo, DownloadLinkInfo
 
 
 def wrap_request(func, *args, count: int = 10, expected: Any):
@@ -34,7 +34,21 @@ def wrap_request(func, *args, count: int = 10, expected: Any):
             time.sleep(5)
     raise Exception(notes)
 
+
 def search_animes(search: str):
     with AnimeFLV() as api:
         data = wrap_request(api.search, search, expected=[AnimeInfo(0, "")])
     return data
+
+
+def get_anime_episode_info_download(id: str) -> List[EpisodeInfoDownload]:
+    with AnimeFLV() as api:
+        data: List[EpisodeInfo] = wrap_request(api.get_anime_info, id, expected=[AnimeInfo(0, "")]).episodes
+
+        r: List[EpisodeInfoDownload] = []
+
+        for e in data:
+            download = wrap_request(api.get_links, f'{e.anime}-{e.id}', expected=[List[DownloadLinkInfo('', '')]])
+            r.append(EpisodeInfoDownload(id=e.id, anime=e.anime, image_preview=e.image_preview, downloads=download))
+    return r
+

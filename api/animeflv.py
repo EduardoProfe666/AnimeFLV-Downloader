@@ -56,6 +56,7 @@ class EpisodeInfo:
     image_preview: Optional[str] = None
 
 
+
 @dataclass
 class AnimeInfo:
     id: Union[str, int]
@@ -75,6 +76,13 @@ class DownloadLinkInfo:
     server: str
     url: str
 
+
+@dataclass
+class EpisodeInfoDownload:
+    id: Union[str, int]
+    anime: str
+    image_preview: Optional[str] = None
+    downloads: Optional[List[DownloadLinkInfo]] = None
 
 class EpisodeFormat(Flag):
     Subtitled = auto()
@@ -103,7 +111,6 @@ class AnimeFLV(object):
     def get_links(
         self,
         id: str,
-        episode: Union[str, int],
         format: EpisodeFormat = EpisodeFormat.Subtitled,
         **kwargs,
     ) -> List[DownloadLinkInfo]:
@@ -123,7 +130,7 @@ class AnimeFLV(object):
         :param **kwargs: Optional arguments for filter output (see doc).
         :rtype: list
         """
-        response = self._scraper.get(f"{ANIME_VIDEO_URL}{id}-{episode}")
+        response = self._scraper.get(f"{ANIME_VIDEO_URL}{id}")
         soup = BeautifulSoup(response.text, "lxml")
         table = soup.find("table", attrs={"class": "RTbl"})
 
@@ -357,6 +364,7 @@ class AnimeFLV(object):
             genres=genres,
             **information,
         )
+
 
     def _process_anime_list_info(self, elements: ResultSet) -> List[AnimeInfo]:
         ret = []
