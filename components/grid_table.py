@@ -22,6 +22,7 @@ TODOs:
 
 from dataclasses import dataclass, field
 from datetime import datetime
+from io import StringIO
 from typing import Any, Callable, Literal, Protocol
 
 import pandas as pd
@@ -29,25 +30,13 @@ import pandas as pd
 import mesop as me
 
 SortDirection = Literal["asc", "desc"]
-df = pd.DataFrame(
-    data={
-        "NA": [pd.NA, pd.NA, pd.NA],
-        "Index": [3, 2, 1],
-        "Bools": [True, False, True],
-        "Ints": [101, 90, -55],
-        "Floats": [1002.3, 4.5, -1050203.021],
-        "Date Times": [
-            pd.Timestamp("20180310"),
-            pd.Timestamp("20230310"),
-            datetime(2023, 1, 1, 12, 12, 1),
-        ],
-        "Strings": ["Hello", "World", "!"],
-    }
-)
 
-def set_dataframe(df_new: pd.DataFrame):
-    global df
-    df = df_new
+def serialize_dataframe(df: pd.DataFrame) -> str:
+    return df.to_json(orient="split")
+
+def deserialize_dataframe(json_str: str) -> pd.DataFrame:
+    json_io = StringIO(json_str)
+    return pd.read_json(json_io, orient="split")
 
 @me.stateclass
 class State:
@@ -57,6 +46,12 @@ class State:
     string_output: str
     table_filter: str
     theme: str = "light"
+    df: str = serialize_dataframe(pd.DataFrame(
+    data={
+        "Image": ['https://animeflv.net/uploads/animes/covers/2536.jpg', 'https://animeflv.net/uploads/animes/covers/1620.jpg', 'https://animeflv.net/uploads/animes/covers/2731.jpg'],
+
+    }
+))
 
 
 @dataclass(kw_only=True)
@@ -271,11 +266,11 @@ def get_data_frame():
 
     # Sort the data frame if sorting is enabled.
     if state.sort_column:
-        sorted_df = df.sort_values(
+        sorted_df = deserialize_dataframe(state.df).sort_values(
             by=state.sort_column, ascending=state.sort_direction == "asc"
         )
     else:
-        sorted_df = df
+        sorted_df = deserialize_dataframe(state.df)
 
     # Simple filtering by the Strings column.
     if state.table_filter:
@@ -330,7 +325,9 @@ def expander(df_row_index: int):
     - fetching data to show drill down data
     - add a form for data entry
     """
-    columns = list(df.columns)
+    state = me.state(State)
+
+    columns = list(deserialize_dataframe(state.df).columns)
     with me.box(style=me.Style(padding=me.Padding.all(15))):
         me.text(f"Expanded row: {df_row_index}", type="headline-5")
         with me.box(
@@ -340,7 +337,7 @@ def expander(df_row_index: int):
                     gap=10,
                 )
         ):
-            for index, col in enumerate(df.iloc[df_row_index]):
+            for index, col in enumerate(deserialize_dataframe(state.df).iloc[df_row_index]):
                 me.input(
                     label=columns[index], value=str(col), style=me.Style(width="100%")
                 )

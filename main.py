@@ -1,29 +1,30 @@
+from typing import List
+
 import mesop as me
 import pandas as pd
 from datetime import datetime
+from api.animeflv import AnimeFLV, AnimeInfo
 
 from components.grid_table import GridTableThemeLight, GridTableThemeDark, expander, GridTableExpander, \
     strings_component, GridTableColumn, ints_style, floats_component, date_component, bool_component, on_table_sort, \
     GridTableRow, on_table_cell_click, GridTableHeader, get_data_frame, grid_table, on_filter_by_strings, \
-    on_theme_changed, State, set_dataframe, image_component
+    on_theme_changed, State, image_component, serialize_dataframe
 
-set_dataframe(pd.DataFrame(
-  data={
-    "Image": ['https://animeflv.net/uploads/animes/covers/2536.jpg', 'https://animeflv.net/uploads/animes/covers/1620.jpg', 'https://animeflv.net/uploads/animes/covers/2731.jpg'],
-    "Index": [3, 2, 1],
-    "Bools": [True, False, True],
-    "Ints": [101, 90, -55],
-    "Floats": [1002.3, 4.5, -1050203.021],
-    "Date Times": [
-      pd.Timestamp("20180310"),
-      pd.Timestamp("20230310"),
-      datetime(2023, 1, 1, 12, 12, 1),
-    ],
-    "Strings": ["Fuck", "World", "!"],
-  }
-))
 
-@me.page(title="AnimeFree-Downloader")
+def convert_to_dataframe(anime_list:  list[AnimeInfo]) -> pd.DataFrame:
+    posters = [anime.poster for anime in anime_list if anime.poster is not None or '']
+    print(posters)
+    data = {"Image": posters}
+    df = pd.DataFrame(data)
+    return df
+
+def on_filter_by_series(e: me.InputBlurEvent | me.InputEnterEvent):
+    """Saves the filtering string to be used in `get_data_frame`"""
+    with AnimeFLV() as api:
+        state = me.state(State)
+        state.df = serialize_dataframe(convert_to_dataframe(api.search(e.value)))
+
+@me.page(title="Anime Free Downloader")
 def home():
     state = me.state(State)
 
@@ -42,7 +43,7 @@ def home():
         me.input(
             label="Filter by Strings column",
             style=me.Style(width="100%"),
-            on_blur=on_filter_by_strings,
+            on_blur=on_filter_by_series,
             on_enter=on_filter_by_strings,
         )
 
@@ -55,13 +56,13 @@ def home():
             row_config=GridTableRow(
                 columns={
                     "Image": GridTableColumn(component=image_component),
-                    "Bools": GridTableColumn(component=bool_component),
-                    "Date Times": GridTableColumn(component=date_component),
-                    "Floats": GridTableColumn(component=floats_component),
-                    "Ints": GridTableColumn(style=ints_style, sortable=True),
-                    "Strings": GridTableColumn(
-                        component=strings_component, sortable=True
-                    ),
+                    # "Bools": GridTableColumn(component=bool_component),
+                    # "Date Times": GridTableColumn(component=date_component),
+                    # "Floats": GridTableColumn(component=floats_component),
+                    # "Ints": GridTableColumn(style=ints_style, sortable=True),
+                    # "Strings": GridTableColumn(
+                    #     component=strings_component, sortable=True
+                    # ),
                 },
                 expander=GridTableExpander(
                     component=expander,
