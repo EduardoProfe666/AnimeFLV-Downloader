@@ -4,7 +4,7 @@
 > 
 > 🚧 Under Development 🚧     
 
- Download fastly and free your favorite animes
+Descarga de forma rápida y segura tus animes favoritos desde distintos servidores.
 
-## Api
-The main
+Nada de anuncios, ni esperas, solo busca tu anime y descarga todos los episodios que quieras.
+
