@@ -12,7 +12,7 @@ def on_filter_by_series(e: me.ClickEvent | me.InputEnterEvent):
     state = me.state(State)
     if state.serie != '':
         state.df = serialize_dataframe(convert_to_dataframe(search_animes(state.serie)))
-        state.df = get_data_frame()
+        get_data_frame()
 
 
 def on_type(e: me.InputBlurEvent | me.InputEnterEvent | me.InputEvent):
